@@ -27,13 +27,34 @@ public class ImageProcessingService
         _httpClient = httpClient;
     }
 
-    /// <summary>Maps to POST /api/image/process.</summary>
-    public async Task<ProcessImageResponse> ProcessImageAsync(byte[] data, string filename)
+    /// <summary>
+    /// Maps to POST /api/image/process. location/symptoms/notes are optional tags
+    /// carried alongside the image so a later "Save to history" shows a properly
+    /// labeled entry in the History list.
+    /// </summary>
+    public async Task<ProcessImageResponse> ProcessImageAsync(
+        byte[] data, string filename, string? location = null,
+        IEnumerable<string>? symptoms = null, string? notes = null)
     {
         using var content = new MultipartFormDataContent();
         using var fileContent = new ByteArrayContent(data);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue(GetContentType(filename));
         content.Add(fileContent, "file", filename);
+
+        if (!string.IsNullOrWhiteSpace(location))
+        {
+            content.Add(new StringContent(location), "location");
+        }
+
+        foreach (var symptom in symptoms ?? Enumerable.Empty<string>())
+        {
+            content.Add(new StringContent(symptom), "symptoms");
+        }
+
+        if (!string.IsNullOrWhiteSpace(notes))
+        {
+            content.Add(new StringContent(notes), "notes");
+        }
 
         using var response = await SendAsync(() => _httpClient.PostAsync("/api/image/process", content));
 
@@ -64,6 +85,22 @@ public class ImageProcessingService
 
         var result = await response.Content.ReadFromJsonAsync<ExplainResponse>();
         return result?.Explanation ?? throw new ImageProcessingApiException("The analysis service returned an empty response.");
+    }
+
+    /// <summary>Maps to POST /api/image/save/{id} -- marks a processed check as saved.</summary>
+    public async Task SaveToHistoryAsync(string processingId)
+    {
+        using var response = await SendAsync(() =>
+            _httpClient.PostAsync($"/api/image/save/{Uri.EscapeDataString(processingId)}", null));
+    }
+
+    /// <summary>Maps to GET /api/image/history -- all checks that have been saved.</summary>
+    public async Task<List<HistoryEntry>> GetHistoryAsync()
+    {
+        using var response = await SendAsync(() => _httpClient.GetAsync("/api/image/history"));
+
+        var result = await response.Content.ReadFromJsonAsync<HistoryResponse>();
+        return result?.Entries ?? new List<HistoryEntry>();
     }
 
     /// <summary>

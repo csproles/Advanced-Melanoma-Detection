@@ -22,6 +22,43 @@ public class ExplainResponse
     public string Explanation { get; set; } = string.Empty;
 }
 
+public class SaveResponse
+{
+    [JsonPropertyName("saved")]
+    public bool Saved { get; set; }
+}
+
+/// <summary>One row in the History list -- a saved check, with a small thumbnail.</summary>
+public class HistoryEntry
+{
+    [JsonPropertyName("processingId")]
+    public string ProcessingId { get; set; } = string.Empty;
+
+    [JsonPropertyName("location")]
+    public string Location { get; set; } = string.Empty;
+
+    [JsonPropertyName("symptoms")]
+    public List<string> Symptoms { get; set; } = new();
+
+    [JsonPropertyName("notes")]
+    public string Notes { get; set; } = string.Empty;
+
+    [JsonPropertyName("riskScore")]
+    public double RiskScore { get; set; }
+
+    [JsonPropertyName("processedAt")]
+    public DateTimeOffset? ProcessedAt { get; set; }
+
+    [JsonPropertyName("thumbnail")]
+    public string Thumbnail { get; set; } = string.Empty;
+}
+
+public class HistoryResponse
+{
+    [JsonPropertyName("entries")]
+    public List<HistoryEntry> Entries { get; set; } = new();
+}
+
 public class AbcdeScore
 {
     [JsonPropertyName("score")]
@@ -89,4 +126,13 @@ public class ImageProcessingResults
 
     [JsonPropertyName("risk_score")]
     public double RiskScore { get; set; }
+
+    [JsonPropertyName("location")]
+    public string Location { get; set; } = string.Empty;
+
+    [JsonPropertyName("symptoms")]
+    public List<string> Symptoms { get; set; } = new();
+
+    [JsonPropertyName("notes")]
+    public string Notes { get; set; } = string.Empty;
 }

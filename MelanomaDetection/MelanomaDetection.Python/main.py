@@ -1,6 +1,7 @@
 """Flask API exposing the MelanomaDetector image-processing pipeline."""
 
 import base64
+import datetime
 import os
 import tempfile
 import uuid
@@ -86,6 +87,11 @@ def process_image_endpoint():
         os.remove(tmp_path)
 
     processing_id = f"proc_{uuid.uuid4().hex[:12]}"
+    results["location"] = request.form.get("location", "")
+    results["symptoms"] = request.form.getlist("symptoms")
+    results["notes"] = request.form.get("notes", "")
+    results["saved"] = False
+    results["processed_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
     _results_store[processing_id] = results
 
     return jsonify({"processingId": processing_id})
@@ -111,7 +117,39 @@ def get_results(processing_id):
         "diameter_visual": _encode_image_base64(results["diameter_visual"]),
         "abcde_scores": results["abcde_scores"],
         "risk_score": results["risk_score"],
+        "location": results.get("location", ""),
+        "symptoms": results.get("symptoms", []),
+        "notes": results.get("notes", ""),
     })
+
+
+@app.route("/api/image/save/<processing_id>", methods=["POST"])
+def save_to_history(processing_id):
+    results = _results_store.get(processing_id)
+    if results is None:
+        return jsonify({"error": f"No results found for id '{processing_id}'"}), 404
+
+    results["saved"] = True
+    return jsonify({"saved": True})
+
+
+@app.route("/api/image/history", methods=["GET"])
+def get_history():
+    entries = [
+        {
+            "processingId": processing_id,
+            "location": results.get("location", ""),
+            "symptoms": results.get("symptoms", []),
+            "notes": results.get("notes", ""),
+            "riskScore": results["risk_score"],
+            "processedAt": results.get("processed_at"),
+            "thumbnail": _encode_image_base64(_make_thumbnail(results["original"])),
+        }
+        for processing_id, results in _results_store.items()
+        if results.get("saved")
+    ]
+    entries.sort(key=lambda entry: entry["processedAt"] or "", reverse=True)
+    return jsonify({"entries": entries})
 
 
 @app.route("/api/image/explain/<processing_id>", methods=["POST"])
@@ -141,6 +179,16 @@ def _encode_image_base64(image: np.ndarray) -> str:
     if not success:
         raise ValueError("Failed to encode image to PNG")
     return base64.b64encode(buffer).decode("utf-8")
+
+
+def _make_thumbnail(image: np.ndarray, max_width: int = 160) -> np.ndarray:
+    """Downscale for the history list, so a page of saved checks stays lightweight."""
+    height, width = image.shape[:2]
+    if width <= max_width:
+        return image
+    scale = max_width / width
+    new_size = (max_width, max(1, int(round(height * scale))))
+    return cv2.resize(image, new_size, interpolation=cv2.INTER_AREA)
 
 
 if __name__ == "__main__":
