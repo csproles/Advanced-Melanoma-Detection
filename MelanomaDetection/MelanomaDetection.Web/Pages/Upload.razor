@@ -1,0 +1,173 @@
+@page "/upload"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using MelanomaDetection.Web.Services
+@inject ImageProcessingService ImageProcessingService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Upload Image - Melanoma Detection</PageTitle>
+
+<div class="container my-4" style="max-width: 720px;">
+    <h1>Upload a Skin Lesion Image</h1>
+    <p class="text-muted">Upload a photo of a skin lesion to run it through the ABCDE analysis pipeline.</p>
+
+    <div class="alert alert-danger" role="alert">
+        <strong>DISCLAIMER:</strong> Educational use only.
+        NOT a substitute for professional medical diagnosis.
+        Consult a dermatologist.
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <label for="lesionImage" class="form-label fw-semibold">Select an image</label>
+            <InputFile id="lesionImage" OnChange="HandleFileSelected" accept="image/*" class="form-control" />
+            <div class="form-text">JPEG, PNG, BMP, or WebP. Maximum file size: 5 MB.</div>
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <div class="alert alert-danger mt-3" role="alert">
+                    @ErrorMessage
+                </div>
+            }
+
+            @if (PreviewDataUrl is not null)
+            {
+                <div class="mt-3 text-center">
+                    <img src="@PreviewDataUrl" alt="Selected lesion preview" class="img-fluid rounded border" style="max-height: 400px;" />
+                    <p class="text-muted mt-2 mb-0">@SelectedFileName (@FormattedFileSize)</p>
+                </div>
+            }
+
+            <div class="mt-3">
+                <button type="button" class="btn btn-primary" disabled="@(!CanAnalyze)" @onclick="AnalyzeImage">
+                    @(IsAnalyzing ? "Analyzing..." : "Analyze Image")
+                </button>
+            </div>
+
+            @if (!string.IsNullOrEmpty(StatusMessage))
+            {
+                <div class="alert alert-info mt-3" role="alert">
+                    @StatusMessage
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header fw-semibold">Understanding the ABCDE Rule</div>
+        <div class="card-body">
+            <p class="text-muted">
+                Dermatologists use the ABCDE rule as a quick guide for spotting melanoma warning signs in a mole or lesion:
+            </p>
+            <dl class="row mb-0">
+                <dt class="col-sm-2">A &mdash; Asymmetry</dt>
+                <dd class="col-sm-10">One half of the mole doesn't match the other half.</dd>
+
+                <dt class="col-sm-2">B &mdash; Border</dt>
+                <dd class="col-sm-10">Edges are irregular, ragged, notched, or blurred.</dd>
+
+                <dt class="col-sm-2">C &mdash; Color</dt>
+                <dd class="col-sm-10">Color is not uniform and may include shades of brown, black, red, white, or blue.</dd>
+
+                <dt class="col-sm-2">D &mdash; Diameter</dt>
+                <dd class="col-sm-10">Larger than 6mm (about the size of a pencil eraser), though melanomas can be smaller.</dd>
+
+                <dt class="col-sm-2">E &mdash; Evolving</dt>
+                <dd class="col-sm-10">The mole is changing in size, shape, color, or elevation over time.</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+@code {
+    private const long MaxFileSizeBytes = 5 * 1024 * 1024;
+
+    private static readonly HashSet<string> AllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/jpg", "image/png", "image/bmp", "image/webp"
+    };
+
+    private string? ErrorMessage;
+    private string? StatusMessage;
+    private string? PreviewDataUrl;
+    private string? SelectedFileName;
+    private long SelectedFileSize;
+    private byte[]? SelectedFileBytes;
+    private bool IsAnalyzing;
+
+    private bool CanAnalyze => PreviewDataUrl is not null && !IsAnalyzing;
+
+    private string FormattedFileSize => SelectedFileSize < 1024 * 1024
+        ? $"{SelectedFileSize / 1024.0:F1} KB"
+        : $"{SelectedFileSize / (1024.0 * 1024.0):F2} MB";
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        ErrorMessage = null;
+        StatusMessage = null;
+        PreviewDataUrl = null;
+
+        var file = e.File;
+
+        if (!AllowedContentTypes.Contains(file.ContentType))
+        {
+            ErrorMessage = $"Unsupported file type '{file.ContentType}'. Please upload a JPEG, PNG, BMP, or WebP image.";
+            return;
+        }
+
+        if (file.Size == 0)
+        {
+            ErrorMessage = "The selected file is empty.";
+            return;
+        }
+
+        if (file.Size > MaxFileSizeBytes)
+        {
+            ErrorMessage = $"File is too large ({file.Size / (1024.0 * 1024.0):F2} MB). Maximum allowed size is 5 MB.";
+            return;
+        }
+
+        try
+        {
+            using var stream = file.OpenReadStream(MaxFileSizeBytes);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+
+            SelectedFileBytes = memoryStream.ToArray();
+            PreviewDataUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(SelectedFileBytes)}";
+            SelectedFileName = file.Name;
+            SelectedFileSize = file.Size;
+        }
+        catch (IOException)
+        {
+            ErrorMessage = "File is too large to read. Maximum allowed size is 5 MB.";
+        }
+    }
+
+    private async Task AnalyzeImage()
+    {
+        if (SelectedFileBytes is null || SelectedFileName is null)
+        {
+            return;
+        }
+
+        IsAnalyzing = true;
+        ErrorMessage = null;
+        StatusMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            var response = await ImageProcessingService.ProcessImageAsync(SelectedFileBytes, SelectedFileName);
+            NavigationManager.NavigateTo($"/results/{response.ProcessingId}");
+        }
+        catch (ImageProcessingApiException ex)
+        {
+            ErrorMessage = ex.Message;
+            IsAnalyzing = false;
+        }
+    }
+}

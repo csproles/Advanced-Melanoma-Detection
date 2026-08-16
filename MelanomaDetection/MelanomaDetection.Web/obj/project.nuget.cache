@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "dgSpecHash": "yKQaJnpYgc0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\calli\\Documents\\GitHub\\Advanced-Melanoma-Detection\\MelanomaDetection\\MelanomaDetection.Web\\MelanomaDetection.Web.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\calli\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.9\\microsoft.aspnetcore.app.internal.assets.10.0.9.nupkg.sha512",
+    "C:\\Users\\calli\\.nuget\\packages\\microsoft.extensions.logging\\10.0.11\\microsoft.extensions.logging.10.0.11.nupkg.sha512",
+    "C:\\Users\\calli\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\calli\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
+    "C:\\Users\\calli\\.nuget\\packages\\runtime.native.system\\4.3.0\\runtime.native.system.4.3.0.nupkg.sha512",
+    "C:\\Users\\calli\\.nuget\\packages\\system.diagnostics.process\\4.3.0\\system.diagnostics.process.4.3.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference System.Diagnostics.Process will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.",
+      "projectPath": "C:\\Users\\calli\\Documents\\GitHub\\Advanced-Melanoma-Detection\\MelanomaDetection\\MelanomaDetection.Web\\MelanomaDetection.Web.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\calli\\Documents\\GitHub\\Advanced-Melanoma-Detection\\MelanomaDetection\\MelanomaDetection.Web\\MelanomaDetection.Web.csproj",
+      "libraryId": "System.Diagnostics.Process",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference Microsoft.Extensions.Logging will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.",
+      "projectPath": "C:\\Users\\calli\\Documents\\GitHub\\Advanced-Melanoma-Detection\\MelanomaDetection\\MelanomaDetection.Web\\MelanomaDetection.Web.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\calli\\Documents\\GitHub\\Advanced-Melanoma-Detection\\MelanomaDetection\\MelanomaDetection.Web\\MelanomaDetection.Web.csproj",
+      "libraryId": "Microsoft.Extensions.Logging",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}
