@@ -1,5 +1,5 @@
 .app-nav {
-    background: var(--color-navy);
+    background: var(--color-navy, #1B3E6F);
     position: sticky;
     top: 0;
     z-index: 20;
@@ -15,7 +15,12 @@
     padding: 4px 4px;
 }
 
-.app-nav-link {
+/* ::deep is required here: these classes are applied to <NavLink>, a child
+   component from the framework -- Blazor only auto-scopes elements this
+   component's own markup renders directly, not a child component's
+   internal output, so a plain (non-::deep) selector silently never matches
+   the <a> NavLink renders and these rules would never apply at all. */
+::deep .app-nav-link {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -24,21 +29,22 @@
     gap: 1px;
     padding: 6px 4px;
     border-radius: var(--radius-control);
-    color: rgba(255, 255, 255, 0.7);
-    text-decoration: none;
+    color: #EAF1FA !important;
+    text-decoration: none !important;
     font-family: var(--font-body);
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 600;
     min-width: 0;
 }
 
-.app-nav-link:hover {
-    color: #fff;
+::deep .app-nav-link:hover {
+    color: #ffffff !important;
 }
 
-.app-nav-link.active {
-    background-color: rgba(255, 255, 255, 0.14);
-    color: #fff;
+::deep .app-nav-link.active {
+    background-color: #EAF1FA;
+    color: var(--color-navy, #1B3E6F) !important;
+    font-weight: 700;
 }
 
 .app-nav-icon {
@@ -100,7 +106,7 @@
         padding: 0;
     }
 
-    .app-nav-link {
+    ::deep .app-nav-link {
         flex: none;
         flex-direction: row;
         justify-content: flex-start;
