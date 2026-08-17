@@ -1,6 +1,5 @@
 .app-nav {
-    background: var(--color-white);
-    border-bottom: 1px solid rgba(124, 151, 180, 0.25);
+    background: var(--color-navy);
     position: sticky;
     top: 0;
     z-index: 20;
@@ -12,105 +11,105 @@
 
 .app-nav-links {
     display: flex;
-    justify-content: space-around;
     align-items: center;
-    padding: 6px 8px;
+    padding: 4px 4px;
 }
 
 .app-nav-link {
     display: flex;
+    flex: 1;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
-    padding: 8px 14px;
+    justify-content: center;
+    gap: 1px;
+    padding: 6px 4px;
     border-radius: var(--radius-control);
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     font-family: var(--font-body);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
+    min-width: 0;
 }
 
 .app-nav-link:hover {
-    color: var(--color-navy);
+    color: #fff;
 }
 
 .app-nav-link.active {
-    background-color: var(--color-alice-blue);
-    color: var(--color-navy);
+    background-color: rgba(255, 255, 255, 0.14);
+    color: #fff;
 }
 
 .app-nav-icon {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
 }
 
 @media (min-width: 860px) {
     .app-nav {
-        width: 212px;
+        width: 168px;
         flex-shrink: 0;
-        border-bottom: none;
-        border-right: 1px solid rgba(124, 151, 180, 0.25);
         height: 100vh;
         position: sticky;
         top: 0;
         display: flex;
         flex-direction: column;
-        padding: 20px 14px;
+        padding: 16px 10px;
     }
 
     .app-nav-brand {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 0 10px 24px;
+        gap: 8px;
+        padding: 0 6px 18px;
     }
 
         .app-nav-brand a {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             text-decoration: none;
         }
 
     .app-nav-brand-mark {
-        width: 34px;
-        height: 34px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, var(--color-navy), var(--color-steel-blue));
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.14);
         color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
         font-family: var(--font-heading);
         font-weight: 800;
-        font-size: 13px;
+        font-size: 11px;
     }
 
     .app-nav-brand-text {
         font-family: var(--font-heading);
         font-weight: 700;
-        color: var(--color-navy);
-        font-size: 15px;
+        color: #fff;
+        font-size: 13.5px;
     }
 
     .app-nav-links {
         flex-direction: column;
         align-items: stretch;
-        gap: 4px;
+        gap: 2px;
         padding: 0;
     }
 
     .app-nav-link {
         flex-direction: row;
         justify-content: flex-start;
-        gap: 12px;
-        padding: 10px 12px;
-        font-size: 14px;
+        gap: 10px;
+        padding: 8px 10px;
+        font-size: 13px;
     }
 
     .app-nav-icon {
-        width: 20px;
-        height: 20px;
+        width: 17px;
+        height: 17px;
     }
 }

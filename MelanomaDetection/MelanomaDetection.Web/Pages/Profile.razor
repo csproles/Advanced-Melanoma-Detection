@@ -9,25 +9,11 @@
     <h1 class="profile-title">Profile</h1>
 
     <div class="card-panel">
-        <div class="account-header">
-            <div class="avatar"></div>
-            <div>
-                <p class="panel-title" style="margin-bottom:2px;">Account</p>
-                <p class="account-subtitle">Your personal details.</p>
-            </div>
-        </div>
+        <p class="panel-title">Account</p>
         <div class="account-fields">
             <div class="field-group">
                 <label class="field-label" for="fullName">Full name</label>
                 <input id="fullName" type="text" class="form-control" placeholder="Jane Doe" @bind="FullName" />
-            </div>
-            <div class="field-group">
-                <label class="field-label" for="email">Email</label>
-                <input id="email" type="email" class="form-control" placeholder="jane@example.com" @bind="Email" />
-            </div>
-            <div class="field-group">
-                <label class="field-label" for="dob">Date of birth</label>
-                <input id="dob" type="date" class="form-control" @bind="DateOfBirth" />
             </div>
         </div>
     </div>
@@ -117,8 +103,6 @@
 
 @code {
     private string FullName = string.Empty;
-    private string Email = string.Empty;
-    private DateOnly? DateOfBirth;
 
     private bool ShareWithDermatologist = true;
     private bool AnonymousAnalytics;
