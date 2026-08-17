@@ -466,3 +466,51 @@
     flex-wrap: wrap;
     gap: 12px;
 }
+
+.detail-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: var(--color-text);
+    border: 1.5px solid var(--color-azure-mist);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.detail-link:hover {
+    border-color: var(--color-navy);
+    background-color: var(--color-alice-blue);
+}
+
+.detail-link-icon {
+    width: 26px;
+    height: 26px;
+    color: var(--color-navy);
+    flex-shrink: 0;
+}
+
+.detail-link-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.detail-link-title {
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--color-navy);
+}
+
+.detail-link-subtitle {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+}
+
+.detail-link-chevron {
+    width: 20px;
+    height: 20px;
+    color: var(--color-steel-blue);
+    flex-shrink: 0;
+}
