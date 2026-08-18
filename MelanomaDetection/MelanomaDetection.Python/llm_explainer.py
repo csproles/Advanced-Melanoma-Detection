@@ -20,8 +20,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
-_REPO_ROOT_ENV = Path(__file__).resolve().parents[2] / ".env"
-load_dotenv(dotenv_path=_REPO_ROOT_ENV)
+_here = Path(__file__).resolve()
+_repo_root_env = _here.parents[2] if len(_here.parents) > 2 else _here.parent
+load_dotenv(dotenv_path=_repo_root_env / ".env")
 
 MODEL = "gpt-4o"
 
