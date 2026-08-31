@@ -1,0 +1,4 @@
+.venv/
+LocalResults/
+__pycache__/
+*.pyc
