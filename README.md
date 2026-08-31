@@ -16,3 +16,5 @@ Notes:
 - This repository's runnable entrypoint is the top-level `main.py` which
   delegates to the original pipeline in the `Code` directory. Run commands
   from the repository root so the example paths (e.g. `Images/...`) resolve.
+
+shree-huggingface is using https://huggingface.co/DevBhuyan/Skin-Lesion-Segmentation model
